@@ -1,0 +1,157 @@
+---
+import { getCollection, render } from "astro:content";
+import { Image, getImage } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const all = await getCollection("work");
+  const sorted = all.sort((a, b) => a.data.order - b.data.order);
+  return sorted.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      next: sorted[i + 1] ?? null,
+    },
+  }));
+}
+
+const { entry, next } = Astro.props;
+const { title, client, year, services, heroImage, publishedIn, credits } = entry.data;
+const { Content } = await render(entry);
+
+const meta = [services.join(" · "), String(year), publishedIn].filter(Boolean).join(" · ");
+
+const creditEntries: Array<[string, string]> = [];
+if (credits?.editorialDirection)
+  creditEntries.push(["Editorial direction", credits.editorialDirection]);
+if (credits?.photography) creditEntries.push(["Photography", credits.photography]);
+if (credits?.styling) creditEntries.push(["Styling", credits.styling]);
+if (credits?.setDesign) creditEntries.push(["Set design", credits.setDesign]);
+if (credits?.words) creditEntries.push(["Words", credits.words]);
+if (credits?.other) for (const o of credits.other) creditEntries.push([o.role, o.name]);
+
+const description = `${title} for ${client}. ${publishedIn ?? `Year ${year}.`}`;
+
+const ogImage = await getImage({
+  src: heroImage,
+  width: 1200,
+  format: "jpg",
+});
+const site = Astro.site!.toString().replace(/\/$/, "");
+const ogImageUrl = new URL(ogImage.src, Astro.site).toString();
+
+const creativeWorkJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: `${title} for ${client}`,
+  image: ogImageUrl,
+  datePublished: String(year),
+  creator: {
+    "@type": "Organization",
+    name: "Studio Sixtysix",
+    url: site,
+  },
+  ...(publishedIn ? { isPartOf: { "@type": "CreativeWork", name: publishedIn } } : {}),
+};
+---
+
+<BaseLayout
+  title={`${title} for ${client}`}
+  description={description}
+  image={ogImage.src}
+  jsonLd={creativeWorkJsonLd}
+  ogType="article"
+>
+  <article class="container-base pb-24">
+    <header class="max-w-4xl">
+      <h1 class="text-display-l">
+        {title} <em>for</em> {client}
+      </h1>
+      <hr class="mt-8" />
+      <p class="text-caption mt-3">{meta}</p>
+    </header>
+
+    <div class="mt-16">
+      <Image
+        src={heroImage}
+        alt={`${title} for ${client}`}
+        widths={[720, 1080, 1440, 1920, 2400]}
+        sizes="(min-width: 1024px) 1200px, 100vw"
+        class="block w-full"
+      />
+    </div>
+
+    <div class="case-body mt-16 max-w-3xl">
+      <Content />
+    </div>
+
+    {
+      creditEntries.length > 0 && (
+        <section class="mt-20 max-w-3xl" aria-label="Credits">
+          <hr class="mb-6" />
+          <dl class="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2">
+            {creditEntries.map(([role, name]) => (
+              <>
+                <dt class="text-caption">{role}</dt>
+                <dd class="text-caption" style="color: var(--color-ink)">
+                  {name}
+                </dd>
+              </>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    <nav class="mt-24" aria-label="Project navigation">
+      <hr class="mb-6" />
+      {
+        next ? (
+          <a href={`/work/${next.id}/`} class="text-lead block" data-astro-prefetch>
+            Next project: {next.data.title} <em>for</em> {next.data.client} →
+          </a>
+        ) : (
+          <a href="/work/" class="text-lead block" data-astro-prefetch>
+            Back to all work →
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .case-body p {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    margin-block: 1rem;
+  }
+
+  .case-body p:first-of-type {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    line-height: 1.4;
+    margin-block: 0 2.25rem;
+  }
+
+  .case-body img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-block: 2.5rem;
+  }
+
+  .case-body figure {
+    margin: 2.5rem 0;
+  }
+
+  .case-body figcaption {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+    margin-top: 0.5rem;
+  }
+</style>

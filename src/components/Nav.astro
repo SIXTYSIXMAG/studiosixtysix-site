@@ -1,0 +1,39 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const links = [
+  { href: "/work", label: "Work" },
+  { href: "/services", label: "Services" },
+  { href: "/studio", label: "Studio" },
+  { href: "/contact", label: "Contact" },
+];
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+---
+
+<header class="container-base pt-8 pb-12 md:pt-10 md:pb-16">
+  <div class="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3">
+    <a href="/" class="text-nav" aria-label="Studio Sixtysix home">Studio Sixtysix</a>
+    <nav aria-label="Primary">
+      <ul class="flex flex-wrap gap-x-7 gap-y-2">
+        {
+          links.map(({ href, label }) => (
+            <li>
+              <a href={href} class:list={["text-nav", { active: isActive(href) }]}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  a.active {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--color-oxblood);
+  }
+</style>

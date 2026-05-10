@@ -1,0 +1,23 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WorkTile from "../../components/WorkTile.astro";
+
+const allWork = await getCollection("work");
+const sorted = allWork.sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Work"
+  description="Selected projects from Studio Sixtysix. Editorial production, creative direction, and consulting for the design industry."
+>
+  <section class="container-base pb-12">
+    <h1 class="text-display-l">Work</h1>
+  </section>
+
+  <section class="container-base pb-24">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-2">
+      {sorted.map((entry) => <WorkTile entry={entry} variant="index" />)}
+    </div>
+  </section>
+</BaseLayout>

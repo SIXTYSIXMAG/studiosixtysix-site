@@ -1,0 +1,72 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  ogType?: "website" | "article";
+}
+
+const {
+  title,
+  description = "Creative direction, editorial production, and consulting for the design industry. The consulting practice of Sixtysix Magazine.",
+  image = "/og-default.jpg",
+  jsonLd,
+  ogType = "website",
+} = Astro.props;
+
+const fullTitle = title === "Studio Sixtysix" ? title : `${title} — Studio Sixtysix`;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site).toString();
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<link
+  rel="preload"
+  href="/fonts/Fraunces-Variable.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link
+  rel="preload"
+  href="/fonts/Inter-Variable.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content="Studio Sixtysix" />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{
+  jsonLd && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd)}
+    />
+  )
+}
+
+<ClientRouter />

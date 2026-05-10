@@ -1,0 +1,37 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="container-base mt-24 pb-16 md:mt-40">
+  <hr class="mb-12" />
+
+  <div class="grid grid-cols-1 gap-12 md:grid-cols-12">
+    <div class="md:col-span-7">
+      <p class="text-display-l">
+        Studio Sixtysix.
+      </p>
+      <p class="text-caption mt-3 max-w-md">
+        Chicago, IL. The consulting practice of <a href="https://sixtysixmag.com" rel="noopener"
+          >Sixtysix Magazine</a
+        >.
+      </p>
+    </div>
+
+    <div class="md:col-span-5">
+      <dl class="text-body grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
+        <dt class="text-caption">New projects</dt>
+        <dd>
+          <a href="mailto:hello@studiosixtysix.co">hello@studiosixtysix.co</a>
+        </dd>
+        <dt class="text-caption">Press</dt>
+        <dd>
+          <a href="mailto:press@studiosixtysix.co">press@studiosixtysix.co</a>
+        </dd>
+        <dt class="text-caption">Address</dt>
+        <dd>Studio Sixtysix, Chicago, IL</dd>
+      </dl>
+    </div>
+  </div>
+
+  <p class="text-caption mt-16">© {year} Studio Sixtysix.</p>
+</footer>

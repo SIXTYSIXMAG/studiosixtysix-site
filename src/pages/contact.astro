@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const year = new Date().getFullYear();
+---
+
+<BaseLayout
+  title="Contact"
+  description="Reach Studio Sixtysix. New projects, press, and general inquiries by email."
+>
+  <section class="container-base pb-12">
+    <h1 class="text-display-l">Contact</h1>
+  </section>
+
+  <section class="container-base pb-12 max-w-3xl">
+    <p class="text-lead">
+      We are taking on new projects for {year}. The fastest way to reach us is by email.
+    </p>
+  </section>
+
+  <section class="container-base pb-24 max-w-3xl">
+    <dl class="text-body-l grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
+      <dt class="text-caption">New projects</dt>
+      <dd>
+        <a href="mailto:hello@studiosixtysix.co">hello@studiosixtysix.co</a>
+      </dd>
+      <dt class="text-caption">Press and general</dt>
+      <dd>
+        <a href="mailto:press@studiosixtysix.co">press@studiosixtysix.co</a>
+      </dd>
+    </dl>
+    <p class="text-body mt-10">Chicago, IL.</p>
+  </section>
+</BaseLayout>

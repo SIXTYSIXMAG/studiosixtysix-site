@@ -1,17 +1,79 @@
 ---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WorkTile from "../components/WorkTile.astro";
+import { services } from "../data/services";
 
+const allWork = await getCollection("work");
+const featured = allWork
+  .filter((w) => w.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 6);
+
+const site = Astro.site!.toString().replace(/\/$/, "");
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Studio Sixtysix",
+  url: site,
+  logo: `${site}/og-default.jpg`,
+  email: "hello@studiosixtysix.co",
+  description:
+    "Creative direction, editorial production, and consulting for the design industry. The consulting practice of Sixtysix Magazine.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Chicago",
+    addressRegion: "IL",
+    addressCountry: "US",
+  },
+  sameAs: ["https://sixtysixmag.com"],
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Studio Sixtysix" jsonLd={organizationJsonLd}>
+  <section class="container-base section">
+    <h1 class="text-display-xl max-w-5xl">
+      Studio Sixtysix. Creative direction, editorial production, and consulting for the design
+      industry.
+    </h1>
+    <hr class="mt-12" />
+    <p class="text-caption mt-3">Made by the publishers of Sixtysix Magazine, Chicago.</p>
+  </section>
+
+  <section class="container-base pb-24" aria-label="Featured work">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-20 md:grid-cols-2">
+      {featured.map((entry) => <WorkTile entry={entry} variant="featured" />)}
+    </div>
+  </section>
+
+  <section class="container-base section" aria-labelledby="services-overview">
+    <h2 id="services-overview" class="text-display-l">Services</h2>
+    <ul class="mt-10 grid grid-cols-1 gap-x-12 gap-y-10 md:grid-cols-2">
+      {
+        services.map((s) => (
+          <li>
+            <a href={`/services#${s.id}`} class="text-nav block">
+              {s.name}
+            </a>
+            <p class="text-body mt-2 max-w-md">{s.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="container-base section" aria-label="Magazine connection">
+    <blockquote class="text-lead max-w-3xl">
+      Studio Sixtysix is the consulting practice of Sixtysix Magazine, an independent design and
+      culture publication based in Chicago. Our work is shaped by the editorial standards of a
+      publication that interviews the designers, photographs the spaces, and tracks the cultural
+      arc of the industry our clients operate in.
+    </blockquote>
+  </section>
+
+  <section class="container-base section pt-0">
+    <p class="text-body-l">
+      New projects: <a href="mailto:hello@studiosixtysix.co">hello@studiosixtysix.co</a>
+    </p>
+  </section>
+</BaseLayout>
